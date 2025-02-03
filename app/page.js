@@ -1,10 +1,7 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+import { App } from './app';
 
 export default function Home() {
   return (
-    <div id="app">
-      <p>next.js provided</p>
-    </div>
+    <App />
   );
 }

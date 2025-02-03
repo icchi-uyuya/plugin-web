@@ -1,5 +1,4 @@
 import { OpenAI } from "openai";
-import { render } from "react-dom";
 import { useState } from "react";
 import {
   Typography,
@@ -38,7 +37,7 @@ const prompt = new Prompt(openai);
 const article = new BasicArticle();
 
 //TODO UIをMUIで統一したい
-const App = () => {
+export const App = () => {
   const [keywords, setKeywords] = useState(["ハンドメイド", "指輪"]);
   const [target, setTarget] = useState("カップル");
   const [title, setTitle] = useState("ハンドメイドの指輪の選び方! in 福岡");
@@ -205,5 +204,3 @@ const App = () => {
     </Container>
   );
 };
-
-render(<App />, document.getElementById("app"));
