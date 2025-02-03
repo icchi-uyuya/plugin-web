@@ -1,3 +1,5 @@
+'use client';
+
 import { OpenAI } from "openai";
 import { useState } from "react";
 import {
