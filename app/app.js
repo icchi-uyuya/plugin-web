@@ -51,7 +51,7 @@ export const App = () => {
   const [optGenerated, setOptGenerated] = useState([]);
 
   console.log(keywords, target, title, headings); //TODO デバッグ用
-  console.log(optHeadings);
+  console.log(optHeadings, optGenerated);
 
   const suggestTitles = async () => {
     const titles = await prompt.suggestTitles(keywords, target);
@@ -78,11 +78,13 @@ export const App = () => {
     setIsGenerating(true);
     setOptGenerated([]);
 
+    const res = [];
     for (let h of headings) {
       let s = await prompt.generateBody(title, h.name, h.subs);
-      setOptGenerated([...optGenerated, s]);
+      res.push(s);
     }
     //生成完了の処理
+    setOptGenerated(res);
     setIsGenerating(false);
   };
 
@@ -195,12 +197,13 @@ export const App = () => {
       {optGenerated.length > 0 &&
         optGenerated.map((v, i) => (
           <Box
-            key={i}
             dangerouslyAllowBrowser
             dangerouslySetInnerHTML={{ __html: v }}
           />
         ))}
-      <Button variant="contained" onClick={() => {}}>
+      <Button variant="contained" onClick={() => {
+        navigator.clipboard.writeText(optGenerated.join("\n"));
+      }}>
         HTMLをコピー
       </Button>
     </Container>
