@@ -1,4 +1,6 @@
-import { App } from './app';
+'use client';
+
+import { App } from './src/index';
 
 export default function Home() {
   return (

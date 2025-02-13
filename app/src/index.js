@@ -1,6 +1,5 @@
-'use client';
-
 import { OpenAI } from "openai";
+import { render } from "react-dom";
 import { useState } from "react";
 import {
   Typography,
@@ -15,9 +14,12 @@ import {
   Container,
   Box,
   Stack,
+  Slider
 } from "@mui/material";
 
 //スタイルシートの読み込み
+//import "./scss/app.scss";
+//import style from "./scss/app.module.css";
 
 import { Prompt } from "./prompt";
 import { BasicArticle } from "./article/basic_article";
@@ -40,9 +42,10 @@ const article = new BasicArticle();
 
 //TODO UIをMUIで統一したい
 export const App = () => {
-  const [keywords, setKeywords] = useState(["ハンドメイド", "指輪"]);
-  const [target, setTarget] = useState("カップル");
-  const [title, setTitle] = useState("ハンドメイドの指輪の選び方! in 福岡");
+  const [refer, setRefer] = useState(""); //参考サイト
+  const [keywords, setKeywords] = useState([]);
+  const [target, setTarget] = useState("");
+  const [title, setTitle] = useState("");
   const [headings, setHeadings] = useState([]); //list[Heading]
 
   const [isGenerating, setIsGenerating] = useState(false);
@@ -50,8 +53,8 @@ export const App = () => {
   const [optHeadings, setOptHeadings] = useState([]);
   const [optGenerated, setOptGenerated] = useState([]);
 
-  console.log(keywords, target, title, headings); //TODO デバッグ用
-  console.log(optHeadings, optGenerated);
+  console.log(keywords, target, title, headings, refer); //TODO デバッグ用
+  console.log(optHeadings, optTitles);
 
   const suggestTitles = async () => {
     const titles = await prompt.suggestTitles(keywords, target);
@@ -80,7 +83,8 @@ export const App = () => {
 
     const res = [];
     for (let h of headings) {
-      let s = await prompt.generateBody(title, h.name, h.subs);
+      console.log("start generating", title, h.name, h.subs, h.length);
+      let s = await prompt.generateBody(title, h.name, h.subs, h.length);
       res.push(s);
     }
     //生成完了の処理
@@ -112,8 +116,7 @@ export const App = () => {
         value={target}
         onChange={(e) => setTarget(e.target.value)}
       />
-      <hr />
-
+      
       <h2>タイトル</h2>
       <Stack alignItems={"flex-start"}>
         <Button variant="contained" onClick={suggestTitles}>
@@ -138,7 +141,14 @@ export const App = () => {
         />
       </Stack>
       <hr />
-
+      
+      <h2>参考サイト</h2>
+      <TextField
+        variant="standard"
+        placeholder="参考にするサイトのURLを入力してください"
+        value={refer}
+        onChange={(_, v) => setRefer(v)}
+      />
       <h2>見出し</h2>
       <Stack alignItems={"flex-start"}>
         <Button variant="contained" onClick={suggestHeadings}>
@@ -175,14 +185,30 @@ export const App = () => {
         項目は自由に編集できるため、順序の変更や追加・削除、編集などを行ってから記事を生成してください。
       </Typography>
       {headings.length > 0 &&
-        headings.map((v, i) => {
+        headings.map((head, i) => {
           return (
             <Accordion key={i} defaultExpanded>
               <AccordionSummary>
-                <Typography>{v.name}</Typography>
+                <Typography>{head.name}</Typography>
               </AccordionSummary>
               <AccordionDetails>
-                <TextField multiline defaultValue={v.subs.join("\n")} />
+                <TextField 
+                  multiline  //TODO コンポーネント化
+                  defaultValue={head.subs.join("\n")} 
+                  onChange={e => head.subs = e.target.value.split("\n")}
+                />
+                <Stack>
+                  <Typography>文章の長さ</Typography>
+                  <Slider 
+                    defaultValue={500}
+                    valueLabelDisplay="auto"
+                    onChange={(_, v) => head.length = v}
+                    step={100}
+                    min={300}
+                    max={1500}
+                    marks
+                  />
+                </Stack>
               </AccordionDetails>
             </Accordion>
           );
@@ -197,6 +223,7 @@ export const App = () => {
       {optGenerated.length > 0 &&
         optGenerated.map((v, i) => (
           <Box
+            key={i}
             dangerouslyAllowBrowser
             dangerouslySetInnerHTML={{ __html: v }}
           />
@@ -209,3 +236,5 @@ export const App = () => {
     </Container>
   );
 };
+
+//render(<App />, document.getElementById("app"));
