@@ -71,6 +71,7 @@ export const App = () => {
   const addHeading = async (str) => {
     console.log(str);
     let sub = await prompt.suggestSubheadings(title, str);
+    sub = sub.slice(0, 4);
     let h = new Heading(str, sub);
     console.log(`add heading: ${h.name} ${h.subs}`);
     setHeadings([...headings, h]);
@@ -142,13 +143,6 @@ export const App = () => {
       </Stack>
       <hr />
       
-      <h2>参考サイト</h2>
-      <TextField
-        variant="standard"
-        placeholder="参考にするサイトのURLを入力してください"
-        value={refer}
-        onChange={(_, v) => setRefer(v)}
-      />
       <h2>見出し</h2>
       <Stack alignItems={"flex-start"}>
         <Button variant="contained" onClick={suggestHeadings}>
