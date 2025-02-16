@@ -11,12 +11,17 @@
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
+    "@mui/icons-material": "^6.4.4",
     "@mui/material": "^6.4.2",
     "next": "15.1.6",
     "openai": "^4.82.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "saas": "^1.0.0",
+    "sass": "^1.85.0",
     "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "typescript": "5.7.3"
   }
 }

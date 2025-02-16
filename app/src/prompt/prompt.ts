@@ -1,15 +1,20 @@
 import { zodResponseFormat } from "openai/helpers/zod";
 import { z } from "zod";
-import { StringArray } from "./struct/response";
+import { StringArray } from "./response_type";
+import OpenAI from "openai";
 
 const LLM_MODEL = "gpt-4o-mini";
 
 export class Prompt {
-  constructor(client) {
-    this.client = client;
-  }
 
-  async requestString(system_msg, user_msg) {
+  constructor(
+    public client: OpenAI
+  ) { }
+
+  async requestString(
+    system_msg: string, 
+    user_msg: string
+  ) {
     let completion = await this.client.chat.completions.create({
       model: LLM_MODEL,
       messages: [
@@ -24,7 +29,9 @@ export class Prompt {
     return res;
   }
 
-  async requestStringArray(system_msg, user_msg) {
+  async requestStringArray(
+    system_msg: string, user_msg: string
+  ) {
     let completion = await this.client.beta.chat.completions.parse({
       model: LLM_MODEL,
       messages: [
@@ -40,7 +47,10 @@ export class Prompt {
     return res.array;
   }
 
-  async suggestTitles(keywords, target) { //TODO typescriptに移行する
+  async suggestTitles(
+    keywords: string[], 
+    target: string
+  ) { //TODO typescriptに移行する
     let system_msg = "入力された要件に合うような、SEO最適化されたブログのタイトルを10個提案してください。";
     let user_msg = `
       キーワード:「${keywords.join(", ")}」 
@@ -49,14 +59,20 @@ export class Prompt {
     return res;
   }
 
-  async suggestSeoKeywords(keywords) {
+  async suggestSeoKeywords(
+    keywords: string[],
+  ) {
     let system_msg = "入力された項目に関連するSEOキーワードを30個特定してください。";
     let user_msg = `キーワード:「${keywords.join(", ")}」`; 
     const res = await this.requestStringArray(system_msg, user_msg);
     return res;
   }
 
-  async suggestOutlines(title, keywords, target) {
+  async suggestOutlines(
+    title: string, 
+    keywords: string[], 
+    target: string
+  ) {
     let system_msg = "入力された項目を参考にして、ブログ記事のアウトラインの例を10個考えてください。";
     let user_msg = `
       記事のタイトル:「${title}」
@@ -66,7 +82,10 @@ export class Prompt {
     return res;
   }
 
-  async suggestSubheadings(title, heading) {
+  async suggestSubheadings(
+    title: string, 
+    heading: string
+  ) {
     let system_msg = "入力された見出しに合うような、さらに内側の見出しの例を10個提案してください。";
     let user_msg = `
       記事のタイトル:「${title}」
@@ -76,10 +95,10 @@ export class Prompt {
   }
 
   async generateBody(
-    title, 
-    heading, 
-    subheadings,
-    desiredLength
+    title: string, 
+    heading: string, 
+    subheadings: string[],
+    desiredLength: number,
   ) {
     let system_msg = `
       初心者を対象とした親しみやすく助けになる雰囲気で、SEOを意識した記事の本文を書いてください。

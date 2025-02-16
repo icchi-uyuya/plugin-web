@@ -1,3 +1,26 @@
-#app {
+#app {}
 
+.p-heading-form {
+  .sub-item {
+    &::before {
+      content: "・";
+    }
+
+    &:hover {
+      background-color: #eee;
+      transition: .1s;
+      border-radius: 4px;
+    }
+  }
+
+  .add-button {
+    position: absolute;
+    right: 30px;
+    bottom: 80px;
+  }
+}
+
+.p-heading-modal {
+  background-color: #efefef;
+  width: 75%;
 }
